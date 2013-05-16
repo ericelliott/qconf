@@ -1,0 +1,33 @@
+{
+  "name": "qconf",
+  "version": "0.1.0",
+  "description": "Painless configuration for Node with defaults file, environment variables, arguments, function parameters.",
+  "main": "qconf.js",
+  "dependencies": {
+    "mout": "*",
+    "optimist": "*",
+    "stampit": "*"
+  },
+  "devDependencies": {
+    "tape": "*",
+    "grunt": "*",
+    "grunt-contrib-jshint": "*"
+  },
+  "scripts": {
+    "test": "node ./test/test-qconf.js"
+  },
+  "repository": "git@github.com:dilvie/qconf.git",
+  "keywords": [
+    "config",
+    "configuration",
+    "environment",
+    "variables",
+    "env",
+    "environment",
+    "paths",
+    "secrets",
+    "credentials"
+  ],
+  "author": "Eric Elliott",
+  "license": "MIT"
+}

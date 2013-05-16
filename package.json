@@ -13,7 +13,7 @@
     "grunt-contrib-jshint": "*"
   },
   "scripts": {
-    "test": "node ./test/test-qconf.js"
+    "test": "./scripts/test.sh"
   },
   "repository": "git@github.com:dilvie/qconf.git",
   "keywords": [

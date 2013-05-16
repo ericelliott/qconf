@@ -10,7 +10,7 @@ defaults file < process.env < command line arguments < function call override
 Create your config object:
 ```
 var qconf = require('../qconf.js'),
-  config = qconf({param_override: true, param_setting: 'yes'});
+  config = qconf(); // 99% of the time, this is all you need!
 ```
 
 ### Extra credit

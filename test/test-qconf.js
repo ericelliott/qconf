@@ -17,6 +17,16 @@ test('environment variables', function (t) {
   t.end();
 });
 
+test('command line', function (t) {
+  t.equal(config.get('command-line'), 'foo',
+    'should use command-line settings.');
+
+  t.equal(!!config.get('arg-override'), true,
+    'should use override defaults.');
+
+  t.end();
+});
+
 test('function parameters', function (t) {
 
   t.equal(config.get('param_setting'), 'yes',

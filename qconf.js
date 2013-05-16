@@ -1,6 +1,4 @@
 var fs = require('fs'),
-  forOwn = require('mout/object/forown'),
-  mixIn = require('mout/object/mixin'),
   optimist = require('optimist'),
   stampit = require('stampit'),
 
@@ -35,10 +33,12 @@ var fs = require('fs'),
     configuration = stampit()
       .enclose(function () {
         var attrs = stampit()
-          .state(defaults)
-          .state( JSON.parse(JSON.stringify(process.env)) )
-          .state( JSON.parse(JSON.stringify(argv)) )
-          .state( JSON.parse(JSON.stringify(overrides)) )
+          .state( stampit.extend({},
+            defaults,
+            JSON.parse(JSON.stringify(process.env)),
+            JSON.parse(JSON.stringify(argv)),
+            JSON.parse(JSON.stringify(overrides))
+          ))
           .create();
 
         return stampit.extend(this, {
@@ -55,6 +55,10 @@ var fs = require('fs'),
           }
         });
       }).create();
+
+    if (defaultError) {
+      configuration.defaultError = defaultError;
+    }
 
     return configuration;
   };

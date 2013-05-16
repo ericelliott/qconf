@@ -2,7 +2,7 @@ var qconf = require('../qconf.js'),
   test = require('tape'),
   config = qconf({param_override: true, param_setting: 'yes'});
 
-test('defaults', function(t) {
+test('basics', function(t) {
 
   t.equal(!!config.get('default_setting'), true,
     'should create settings from defaults file.');
@@ -27,3 +27,4 @@ test('function parameters', function (t) {
 
   t.end();
 });
+

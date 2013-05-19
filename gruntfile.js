@@ -13,10 +13,23 @@ module.exports = function (grunt) {
           module: true
         }
       }
+    },
+
+    lexicon: {
+      all: {
+        src: ["./qconf.js"],
+        dest: "doc",
+        options: {
+          title: "Qconf API",
+          format: "markdown"
+        }
+      }
     }
 
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.registerTask('default', ['jshint']);
+  grunt.loadNpmTasks('grunt-lexicon');
+
+  grunt.registerTask('default', ['jshint', 'lexicon']);
 };

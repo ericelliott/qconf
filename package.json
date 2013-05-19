@@ -11,7 +11,8 @@
   "devDependencies": {
     "tape": "*",
     "grunt": "*",
-    "grunt-contrib-jshint": "*"
+    "grunt-contrib-jshint": "*",
+    "grunt-lexicon": "*"
   },
   "scripts": {
     "test": "./scripts/test.sh"

@@ -45,3 +45,35 @@ Painless configuration for your apps!
 ## Motivation
 
 Got sick of the complexity of nconf. Don't try to be everything to everybody. Just get a simple job done with simple code.
+
+## API
+
+### qconf ###
+
+This is the function that gets imported when you require qconf.
+
+Creates a configuration singleton object for your app
+by reading configuration settings from a defaults file,
+environment variables, command line arguments, and finally
+a function parameters hash, in reverse priority.
+
+* @param  {Object} [overrides] A map of config keys and values.
+* @param  {String} [defaultsPath] Path to the defaults file. Can be the only parameter.
+* @return {Object} config A configuration object.
+* @return {Function} config.get The get method
+
+
+### config.get ###
+
+Return the value of the attribute requested.
+
+* @param {String} attr The name of the attribute to return.
+* @return {Any} The value of the requested attribute.
+
+### config.set ###
+
+Set the value of an attribute.
+
+* @param {String} attr The name of the attribute to set.
+* @param {Any} value The value to set the attribute to.
+* @return {Object} The config object (for chaining).

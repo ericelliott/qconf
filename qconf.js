@@ -11,13 +11,14 @@ var fs = require('fs'),
    * environment variables, command line arguments, and finally
    * a function parameters hash, in reverse priority.
    *
-   * @param  {Object} overrides    A map of config keys and values.
-   * @param  {String} [defaultsPath] Path to the default config file.
+   * @param  {Object} [overrides] A map of config keys and values.
+   * @param  {String} [defaultsPath] Path to the defaults file. Can be the only parameter.
    * @return {Object}              An object with .get() and .set().
    */
   configure = function configure(overrides, defaultsPath) {
     var defaults,
-      file = __dirname + (defaultsPath || '/config/config.json'),
+      path = (typeof overrides === 'string') ? overrides : defaultsPath,
+      file = __dirname + (path || '/config/config.json'),
       defaultError;
 
     if (configuration) {
@@ -37,9 +38,20 @@ var fs = require('fs'),
           .create();
 
         return stampit.extend(this, {
+          /**
+           * Return the value of the attribute requested.
+           * @param  {String} attr The name of the attribute to return.
+           * @return {Any} The value of the requested attribute.
+           */
           get: function get(attr) {
             return attrs[attr];
           },
+          /**
+           * Set the value of an attribute.
+           * @param {String} attr  The name of the attribute to set.
+           * @param {Any} value The value to set the attribute to.
+           * @return {Object} The config object (for chaining).
+           */
           set: function set(attr, value) {
             if (!attr) {
               return;

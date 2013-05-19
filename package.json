@@ -1,11 +1,12 @@
 {
   "name": "qconf",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Painless configuration for Node with defaults file, environment variables, arguments, function parameters.",
   "main": "qconf.js",
   "dependencies": {
     "optimist": "*",
-    "stampit": "*"
+    "stampit": "*",
+    "json-stringify-safe": "*"
   },
   "devDependencies": {
     "tape": "*",

@@ -33,12 +33,7 @@ var fs = require('fs'),
     configuration = stampit()
       .enclose(function () {
         var attrs = stampit()
-          .state( stampit.extend({},
-            defaults,
-            JSON.parse(JSON.stringify(process.env)),
-            JSON.parse(JSON.stringify(argv)),
-            JSON.parse(JSON.stringify(overrides))
-          ))
+          .state(defaults, process.env, argv, overrides)
           .create();
 
         return stampit.extend(this, {

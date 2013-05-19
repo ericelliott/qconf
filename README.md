@@ -1,7 +1,7 @@
 qconf
 =====
 
-Painless configuration with defaults file, environment variables, arguments, function parameters.
+Painless configuration for Node apps with defaults file, environment variables, arguments, function parameters.
 
 defaults file < process.env < command line arguments < function call override
 

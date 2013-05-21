@@ -29,7 +29,7 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-lexicon');
+  // grunt.loadNpmTasks('grunt-lexicon');
 
-  grunt.registerTask('default', ['jshint', 'lexicon']);
+  grunt.registerTask('default', ['jshint']);
 };

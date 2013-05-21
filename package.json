@@ -1,18 +1,16 @@
 {
   "name": "qconf",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Painless configuration for Node with defaults file, environment variables, arguments, function parameters.",
   "main": "qconf.js",
   "dependencies": {
-    "optimist": "*",
-    "stampit": "*",
-    "json-stringify-safe": "*"
+    "optimist": "~0.5.0",
+    "stampit": "~0.3.1"
   },
   "devDependencies": {
-    "tape": "*",
-    "grunt": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-lexicon": "*"
+    "tape": "~1.0.2",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.5.3"
   },
   "scripts": {
     "test": "./scripts/test.sh"

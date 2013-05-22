@@ -18,7 +18,7 @@ var fs = require('fs'),
   configure = function configure(overrides, defaultsPath) {
     var defaults,
       path = (typeof overrides === 'string') ? overrides : defaultsPath,
-      file = __dirname + (path || '/config/config.json'),
+      file = path || (process.cwd() + '/config/config.json'),
       defaultError;
 
     if (configuration) {

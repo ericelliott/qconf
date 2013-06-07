@@ -1,4 +1,5 @@
 var fs = require('fs'),
+  path = require('path'),
   optimist = require('optimist'),
   stampit = require('stampit'),
 
@@ -17,8 +18,8 @@ var fs = require('fs'),
    */
   configure = function configure(overrides, defaultsPath) {
     var defaults,
-      path = (typeof overrides === 'string') ? overrides : defaultsPath,
-      file = path || (process.cwd() + '/config/config.json'),
+      pathString = (typeof overrides === 'string') ? overrides : defaultsPath,
+      file = pathString || path.resolve(process.cwd() + '/config/config.json'),
       defaultError;
 
     if (configuration) {

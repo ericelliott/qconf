@@ -19,7 +19,8 @@ var fs = require('fs'),
   configure = function configure(overrides, defaultsPath) {
     var defaults,
       pathString = (typeof overrides === 'string') ? overrides : defaultsPath,
-      file = pathString || path.resolve(process.cwd() + '/config/config.json'),
+      file = pathString && path.resolve(pathString)
+        || path.resolve(process.cwd() + '/config/config.json'),
       defaultError;
 
     if (configuration) {
@@ -70,5 +71,9 @@ var fs = require('fs'),
 
     return configuration;
   };
+
+configure.clear = function clear() {
+  configuration = undefined;
+};
 
 module.exports = configure;

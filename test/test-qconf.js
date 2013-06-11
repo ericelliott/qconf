@@ -38,3 +38,15 @@ test('function parameters', function (t) {
   t.end();
 });
 
+test('path override', function (t) {
+  var value;
+  qconf.clear();
+  config = qconf({param_override: true, param_setting: 'yes'},
+    './test/path-override.json');
+
+  t.ok(config.get('path_override'),
+    'should read configuration from custom paths.');
+  t.ok(config.get('param_override'),
+    'should allow param overrides.');
+  t.end();
+});

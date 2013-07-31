@@ -98,3 +98,23 @@ The config object is an event emitter.
     'WARNING: Undefined environment variable: ' + `attr`
 
 `attr` refers to the name of the variable you tried to get.
+
+For example:
+
+```js
+var qconf = require('qconf'),
+  config = qconf(),
+  util = require('util');
+ 
+config.on('undefined', function (msg, attr) {
+  util.log(msg);
+ 
+  // or build a custom message:
+  util.log('WAT? Can\'t find ' + attr);
+});
+ 
+config.get('some_var');
+// Logs:
+// "WARNING: Undefined environment variable: some_var"
+// "WAT? Can't find some_var"
+```

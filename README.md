@@ -95,6 +95,6 @@ The config object is an event emitter.
 
 `config.get()` will emit the event 'undefined' if the value of the variable in question is `undefined`. It will also emit a convenient, searchable message that you can log and easily find in your logs:
 
-***'WARNING: Undefined environment variable: ' + `attr`**
+    'WARNING: Undefined environment variable: ' + `attr`
 
 `attr` refers to the name of the variable you tried to get.

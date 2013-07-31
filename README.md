@@ -48,7 +48,7 @@ Got sick of the complexity of nconf. Don't try to be everything to everybody. Ju
 
 ## API
 
-### qconf ###
+### qconf() ###
 
 This is the function that gets imported when you require qconf.
 
@@ -71,14 +71,14 @@ Clear the existing configuration. This is typically used to clear out any settin
 
 The config object is the object returned when you call `qconf()`. This is the getter and setter for all your app's environment variables.
 
-### config.get ###
+### config.get() ###
 
 Return the value of the attribute requested.
 
 * @param {String} attr The name of the attribute to return.
 * @return {Any} The value of the requested attribute.
 
-### config.set ###
+### config.set() ###
 
 Set the value of an attribute.
 

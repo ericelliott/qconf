@@ -77,3 +77,16 @@ Set the value of an attribute.
 * @param {String} attr The name of the attribute to set.
 * @param {Any} value The value to set the attribute to.
 * @return {Object} The config object (for chaining).
+
+
+## Events ##
+
+The config object is an event emitter.
+
+## undefined ##
+
+`config.get()` will emit the event 'undefined' if the value of the variable in question is `undefined`. It will also emit a convenient, searchable message that you can log and easily find in your logs:
+
+***'WARNING: Undefined environment variable: ' + `attr`**
+
+`attr` refers to the name of the variable you tried to get.

@@ -2,11 +2,15 @@ var fs = require('fs'),
   path = require('path'),
   optimist = require('optimist'),
   stampit = require('stampit'),
+  EventEmitter = require('events').EventEmitter,
 
   argv = optimist.argv,
   configuration,
+  events = stampit.convertConstructor(EventEmitter),
 
   /**
+   * .configure([overrides,] [defaultsPath]):Object
+   * 
    * Creates a configuration singleton object for your app
    * by reading configuration settings from a defaults file,
    * environment variables, command line arguments, and finally
@@ -19,8 +23,8 @@ var fs = require('fs'),
   configure = function configure(overrides, defaultsPath) {
     var defaults,
       pathString = (typeof overrides === 'string') ? overrides : defaultsPath,
-      file = pathString && path.resolve(pathString)
-        || path.resolve(process.cwd() + '/config/config.json'),
+      file = pathString && path.resolve(pathString) ||
+        path.resolve(process.cwd() + '/config/config.json'),
       defaultError;
 
     if (configuration) {
@@ -33,7 +37,7 @@ var fs = require('fs'),
       defaultError = err;
     }
 
-    configuration = stampit()
+    configuration = stampit.compose(events)
       .enclose(function () {
         var attrs = stampit()
           .state(defaults, process.env, argv, overrides)
@@ -46,7 +50,12 @@ var fs = require('fs'),
            * @return {Any} The value of the requested attribute.
            */
           get: function get(attr) {
-            return attrs[attr];
+            var val = attrs[attr];
+            if (val === undefined) {
+              this.emit('undefined',
+                'WARNING: Undefined environment variable: ' + attr, attr);
+            }
+            return val;
           },
           /**
            * Set the value of an attribute.

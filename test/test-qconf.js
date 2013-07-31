@@ -50,3 +50,19 @@ test('path override', function (t) {
     'should allow param overrides.');
   t.end();
 });
+
+test('emit on undefined', function (t) {
+  var attr = 'not_defined';
+  qconf.clear();
+  config = qconf();
+
+  config.on('undefined', function (msg, attempted) {
+    t.equal(attempted, attr,
+      'should trigger "undefined" event when attr is undefined');
+
+    t.equal('WARNING: Undefined environment variable: ' + attr, msg,
+      'should emit appropriate message.');
+    t.end();
+  });
+  config.get(attr);
+});

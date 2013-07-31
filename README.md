@@ -62,10 +62,14 @@ a function parameters hash, in reverse priority.
 * @return {Object} config A configuration object.
 * @return {Function} config.get The get method
 
-## qconf.clear() ##
+### qconf.clear() ###
 
 Clear the existing configuration. This is typically used to clear out any settings prior to reloading configuration with a subsequent call to `qconf()`.
 
+
+## The config object ##
+
+The config object is the object returned when you call `qconf()`. This is the getter and setter for all your app's environment variables.
 
 ### config.get ###
 

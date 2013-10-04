@@ -58,7 +58,7 @@ environment variables, command line arguments, and finally
 a function parameters hash, in reverse priority.
 
 * @param  {Object} [overrides] A map of config keys and values.
-* @param  {Array} || {String} [filesPath] An array of config files in order of imporance or path to the defaults file. Can be the only parameter.
+* @param  {Array} || {String} [filesPath] An array of config files in order of precedence (least to most) or path to the defaults file. Can be the only parameter.
 * @return {Object} config A configuration object.
 * @return {Function} config.get The get method
 

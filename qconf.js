@@ -16,7 +16,7 @@ var optimist = require('optimist'),
    * a function parameters hash, in reverse priority.
    *
    * @param  {Object} [overrides] A map of config keys and values.
-   * @param  {String} [filePaths] Path to the defaults file or list of files in order of importance (least to most). Can be the only parameter.
+   * @param  {String} [filePaths] Path to the defaults file or list of files in order of precedence (least to most). Can be the only parameter.
    * @return {Object}              An object with .get() and .set().
    */
   configure = function configure(overrides, filePaths) {

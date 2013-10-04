@@ -1,47 +1,60 @@
-var fs = require('fs'),
-  path = require('path'),
-  optimist = require('optimist'),
+var optimist = require('optimist'),
   stampit = require('stampit'),
   EventEmitter = require('events').EventEmitter,
+  loadSource = require('./lib/load-source'),
 
   argv = optimist.argv,
   configuration,
   events = stampit.convertConstructor(EventEmitter),
 
   /**
-   * .configure([overrides,] [defaultsPath]):Object
+   * .configure([overrides,] [filePaths]):Object
    * 
    * Creates a configuration singleton object for your app
-   * by reading configuration settings from a defaults file,
+   * by reading configuration settings from a defaults file or list of files,
    * environment variables, command line arguments, and finally
    * a function parameters hash, in reverse priority.
    *
    * @param  {Object} [overrides] A map of config keys and values.
-   * @param  {String} [defaultsPath] Path to the defaults file. Can be the only parameter.
+   * @param  {String} [filePaths] Path to the defaults file or list of files. Can be the only parameter.
    * @return {Object}              An object with .get() and .set().
    */
-  configure = function configure(overrides, defaultsPath) {
-    var defaults,
-      pathString = (typeof overrides === 'string') ? overrides : defaultsPath,
-      file = pathString && path.resolve(pathString) ||
-        path.resolve(process.cwd() + '/config/config.json'),
-      defaultError;
+  configure = function configure(overrides, filePaths) {
+    var defaults = [],
+        errors = [];
 
     if (configuration) {
       return configuration;
     }
 
-    try {
-      defaults = JSON.parse( fs.readFileSync(file, 'utf8') );
-    } catch (err) {
-      defaultError = err;
+    if (Array.isArray(overrides) || typeof overrides === 'string') {
+      filePaths = overrides;
+      overrides = {};
+    }
+
+    if (!(Array.isArray(filePaths) && filePaths.length)) {
+      if (typeof filePaths === 'string') {
+        filePaths = [filePaths];
+      }
+      else {
+        filePaths = ['config/config.json'];
+      }
+    }
+
+    for (var i = 0; i < filePaths.length; i++){
+      try {
+        defaults.push(loadSource(filePaths[i]));
+      } catch (err) {
+        errors.push(err);
+      }
     }
 
     configuration = stampit.compose(events)
       .enclose(function () {
-        var attrs = stampit()
-          .state(defaults, process.env, argv, overrides)
-          .create();
+        var factory = stampit(),
+            attrs = factory
+              .state.apply(factory, defaults.concat(process.env, argv, overrides))
+              .create();
 
         return stampit.extend(this, {
           /**
@@ -74,8 +87,8 @@ var fs = require('fs'),
         });
       }).create();
 
-    if (defaultError) {
-      configuration.defaultError = defaultError;
+    if (errors.length) {
+      configuration.errors = errors;
     }
 
     return configuration;

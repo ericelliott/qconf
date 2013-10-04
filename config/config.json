@@ -2,5 +2,6 @@
   "default_setting": true,
   "envOverride": false,
   "arg_override": false,
-  "param_override": false
+  "param_override": false,
+  "path_override": false
 }

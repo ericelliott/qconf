@@ -65,3 +65,22 @@ test('http - no callback', function (t) {
   qconf.clear();
   t.throws(qconf("http://www.getyourjsonconfighere.com"), "Some message", "should throw an error due to missing callback");
 });
+
+/**
+ * Add support for refresh.
+ *
+ * Under the covers its basically the same as a clear and recreate with same variables.
+ * Takes refresh rate in ms (if not passes, it will refresh once and stop)
+ * Returns config object (chaining purposes)
+ *
+ * Update clear to stop refresh.
+**/
+test('refresh', function (t) {
+  qconf.clear();
+  var override = {hello: 'world'},
+      config = qconf(override);
+  override.hello = 'foo';
+  config.refresh();
+  t.equals(config.get('hello'), 'foo', 'should equal value in overrides');
+  t.end();
+});

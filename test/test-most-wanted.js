@@ -49,7 +49,7 @@ test('async support - with filelist and override', function (t) {
 **/
 test('http', function (t) {
   qconf.clear();
-  qconf("http://www.getyourjsonconfighere.com", function(err, config){
+  qconf('http://www.getyourjsonconfighere.com', function(err, config){
     t.error(err, 'should not cause error');
     t.ok(config, 'should return config singleton');
     t.end();
@@ -63,7 +63,7 @@ test('http', function (t) {
 **/
 test('http - no callback', function (t) {
   qconf.clear();
-  t.throws(qconf("http://www.getyourjsonconfighere.com"), "Some message", "should throw an error due to missing callback");
+  t.throws(qconf('http://www.getyourjsonconfighere.com'), 'Some message', 'should throw an error due to missing callback');
 });
 
 /**

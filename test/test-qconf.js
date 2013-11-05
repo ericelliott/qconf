@@ -1,5 +1,7 @@
-var qconf = require('../qconf.js'),
-  test = require('tape'),
+'use strict';
+
+var test = require('tape'),
+  qconf = require('../qconf.js'),
   config = qconf({param_override: true, param_setting: 'yes'});
 
 test('basics', function(t) {
@@ -39,21 +41,19 @@ test('function parameters', function (t) {
 });
 
 test('path override', function (t) {
-  qconf.clear();
-  config = qconf({param_override: true, param_setting: 'yes'},
-    './test/path-override.json');
+  var conf = qconf({param_override: true, param_setting: 'yes'},
+    'file://test/path-override.json');
 
-  t.ok(config.get('path_override'),
+  t.ok(conf.get('path_override'),
     'should read configuration from custom paths.');
-  t.ok(config.get('param_override'),
+  t.ok(conf.get('param_override'),
     'should allow param overrides.');
   t.end();
 });
 
 test('path override with array', function (t) {
-  qconf.clear();
   config = qconf({param_override: true, param_setting: 'yes'},
-    ['./test/path-override.json']);
+    ['file://test/path-override.json']);
 
   t.ok(config.get('path_override'),
     'should read configuration from custom paths from in passed array.');
@@ -63,9 +63,8 @@ test('path override with array', function (t) {
 });
 
 test('multifile path override', function (t) {
-  qconf.clear();
   config = qconf({param_override: true, param_setting: 'yes'},
-    ['./test/path-override.json', './config/config.json']);
+    ['file://test/path-override.json', 'file://config/config.json']);
 
   t.ok(config.get('default_setting'),
     'should read configuration from custom paths from in passed array.');
@@ -75,9 +74,8 @@ test('multifile path override', function (t) {
 });
 
 test('yaml', function (t) {
-  qconf.clear();
   config = qconf({param_override: true, param_setting: 'yes'},
-    './test/yaml-file.yml');
+    'file://test/yaml-file.yml');
 
   t.ok(config.get('yaml_loaded'),
     'should read configuration from yaml file.');
@@ -87,12 +85,11 @@ test('yaml', function (t) {
 });
 
 test('file overrides', function (t) {
-  qconf.clear();
   config = qconf({param_override: true, param_setting: 'yes'},
     [
-      './config/config.json',
-      './test/path-override.json',
-      './test/yaml-file.yml'
+      'file://config/config.json',
+      'file://test/path-override.json',
+      'file://test/yaml-file.yml'
     ]);
 
   t.equal(config.get('path_override'), "oh, yes",
@@ -102,7 +99,6 @@ test('file overrides', function (t) {
 
 test('emit on undefined', function (t) {
   var attr = 'not_defined';
-  qconf.clear();
   config = qconf();
 
   config.on('undefined', function (msg, attempted) {
@@ -110,8 +106,109 @@ test('emit on undefined', function (t) {
       'should trigger "undefined" event when attr is undefined');
 
     t.equal('WARNING: Undefined environment variable: ' + attr, msg,
-      'should emit appropriate message.');
+      'should emit undefined warning message.');
     t.end();
   });
   config.get(attr);
+});
+
+/**
+ * Add support for config dependencies. This allows you to specify 
+ * configuration that other configuration depends upon.
+ */
+test('Dependencies callback', function (t) {
+  var subject = {hello: 'world'},
+    sentence = function (subject, cb) {
+      var res = {
+        sentence: 'goodbye, cruel ' + subject.hello
+      };
+      return cb(null, res);
+    };
+ 
+  // Callback = Return undefined.  
+  qconf([{
+      name: 'subject',
+      source: subject
+    },
+    {
+      name: 'sentence',
+      source: sentence,
+      dependencies: ['subject']
+    }
+  ], 
+  function (err, conf) {
+    t.error(err, 'Should not cause error.');
+    t.equal(conf.get('sentence'), 'goodbye, cruel world',
+      'Should load dependencies and call callback.');
+    t.end();
+  });
+ 
+});
+ 
+test('Dependencies promise', function (t) {
+  var subject = {hello: 'world'},
+    sentence = function (subject, cb) {
+      var res = {
+        sentence: 'goodbye, cruel ' + subject.hello
+      };
+      return cb(null, res);
+    }, loadConfig;
+ 
+  // No callback = return promise.
+  loadConfig = qconf([{
+      name: 'subject',
+      source: subject
+    },
+    {
+      name: 'sentence',
+      source: sentence,
+      dependencies: ['subject']
+    }
+  ]).then(function (conf) {
+    t.equal(conf.get('sentence'), 'goodbye, cruel world',
+      'should resolve promise with config.');
+    t.end();  
+  }, function (err) {
+    t.error(err, 'Should not cause error.');
+  });
+});
+
+test('Dependencies x3', function (t) {
+  var subject = {hello: 'world'},
+    sentence = function (subject, cb) {
+      var res = {
+        sentence: 'Goodbye, cruel ' + subject.hello
+      };
+      return cb(null, res);
+    },
+    para = function (subject, sentence, cb) {
+      var res = {
+        para: sentence.sentence + '. Hello again!'
+      };
+      return cb(null, res);
+    };
+ 
+  // No callback = return promise.
+  qconf([{
+      name: 'subject',
+      source: subject
+    },
+    {
+      name: 'sentence',
+      source: sentence,
+      dependencies: ['subject']
+    },
+    {
+      name: 'para',
+      source: para,
+      dependencies: ['subject', 'sentence']
+    }
+  ]).then(function (conf) {
+    t.equal(conf.get('para'),
+      'Goodbye, cruel world. Hello again!',
+      'Should handle multiple dependencies.');
+    t.end();
+  }, function (err) {
+    t.error(err, 'Should not cause error.');
+  });
 });

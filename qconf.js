@@ -1,17 +1,18 @@
+'use strict';
+
 var optimist = require('optimist'),
-  stampit = require('stampit'),
-  EventEmitter = require('events').EventEmitter,
-  loadSource = require('./lib/load-source'),
+  processDependencies = require('./lib/process-dependencies.js'),
+  makeConfig = require('./lib/make-config.js'),
+  q = require('q'),
+  loadSource = require('./lib/load-source.js'),
 
   argv = optimist.argv,
-  configuration,
-  events = stampit.convertConstructor(EventEmitter),
 
   /**
    * .configure([overrides,] [filePaths]):Object
    * 
-   * Creates a configuration singleton object for your app
-   * by reading configuration settings from a defaults file or list of files,
+   * Creates a config object for your app
+   * by reading config settings from a defaults file or list of files,
    * environment variables, command line arguments, and finally
    * a function parameters hash, in reverse priority.
    *
@@ -19,83 +20,69 @@ var optimist = require('optimist'),
    * @param  {String} [filePaths] Path to the defaults file or list of files in order of precedence (least to most). Can be the only parameter.
    * @return {Object}              An object with .get() and .set().
    */
-  configure = function configure(overrides, filePaths) {
-    var defaults = [],
-        errors = [];
+  configure = function configure(overrides, URIs) {
+    var sources = [process.env, argv],
+      errors = [],
+      dependencies = Array.isArray(overrides) ?
+        overrides : undefined,
+      config,
+      lastArg = arguments[arguments.length - 1],
+      cb = (typeof lastArg === 'function') ?
+        lastArg : undefined,
+      dfd = q.defer();
 
-    if (configuration) {
-      return configuration;
-    }
-
-    if (Array.isArray(overrides) || typeof overrides === 'string') {
-      filePaths = overrides;
+    // If the first argument is a string, assume
+    // arguments is a list of URIs identifying
+    // config sources. Else, make sure that it
+    // defaults to include config/config.json.
+    if (typeof overrides === 'string') {
+      URIs = [].slice.call(arguments);
       overrides = {};
+    } else if (typeof arguments[1] === 'string') {
+      URIs = [].slice.call(arguments, 1);
+    } else if ( Array.isArray(arguments[1] )) {
+      URIs = arguments[1];
+    } else {
+      URIs = ['file://config/config.json'];
     }
 
-    if (!(Array.isArray(filePaths) && filePaths.length)) {
-      if (typeof filePaths === 'string') {
-        filePaths = [filePaths];
-      }
-      else {
-        filePaths = ['config/config.json'];
-      }
+    // If the first argument is an Array,
+    // assume that it is a list of dependencies.
+    if ( Array.isArray(overrides) ) {
+      processDependencies(dependencies)
+          .then(function (sources) {
+
+        config = makeConfig(sources);
+
+        dfd.resolve(config);
+        if (cb) {
+          return cb(null, config);
+        }
+      }, function catchErr(err) {
+        dfd.reject(config);
+        return cb(err);
+      });
+
+      return dfd.promise;
     }
 
-    for (var i = 0; i < filePaths.length; i++){
+    for (var i = 0; i < URIs.length; i++){
       try {
-        defaults.push(loadSource(filePaths[i]));
+        sources.push(loadSource(URIs[i]));
       } catch (err) {
         errors.push(err);
       }
     }
 
-    configuration = stampit.compose(events)
-      .enclose(function () {
-        var factory = stampit(),
-            attrs = factory
-              .state.apply(factory, defaults.concat(process.env, argv, overrides))
-              .create();
-
-        return stampit.extend(this, {
-          /**
-           * Return the value of the attribute requested.
-           * @param  {String} attr The name of the attribute to return.
-           * @return {Any} The value of the requested attribute.
-           */
-          get: function get(attr) {
-            var val = attrs[attr];
-            if (val === undefined) {
-              this.emit('undefined',
-                'WARNING: Undefined environment variable: ' + attr, attr);
-            }
-            return val;
-          },
-          /**
-           * Set the value of an attribute.
-           * @param {String} attr  The name of the attribute to set.
-           * @param {Any} value The value to set the attribute to.
-           * @return {Object} The config object (for chaining).
-           */
-          set: function set(attr, value) {
-            if (!attr) {
-              return;
-            }
-
-            attrs[attr] = value;
-            return this;
-          }
-        });
-      }).create();
-
-    if (errors.length) {
-      configuration.errors = errors;
+    // If the first argument is an object,
+    // assume that it is a single config overrides
+    // object, and append it to sources:
+    if (typeof overrides === 'object' &&
+        !Array.isArray(overrides)) {
+      sources.push(overrides);
     }
 
-    return configuration;
+    return makeConfig(sources);
   };
-
-configure.clear = function clear() {
-  configuration = undefined;
-};
 
 module.exports = configure;

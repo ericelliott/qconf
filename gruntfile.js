@@ -1,17 +1,26 @@
+'use strict';
+
 module.exports = function (grunt) {
 
   grunt.initConfig({
     jshint: {
-      // define the files to lint
-      files: ['*.js', 'test/**/*.js'],
-      // configure JSHint (documented at http://www.jshint.com/docs/)
+      all: ['./*.js', './lib/**/*.js',
+        './test/**/*.js', './providers/**/*.js'],
       options: {
-          // more options here if you want to override JSHint defaults
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true
-        }
+        curly: true,
+        eqeqeq: true,
+        immed: true,
+        latedef: true,
+        newcap: true,
+        nonew: true,
+        noarg: true,
+        sub: true,
+        undef: true,
+        unused: true,
+        eqnull: true,
+        node: true,
+        strict: true,
+        boss: false
       }
     },
 

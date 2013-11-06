@@ -212,3 +212,22 @@ test('Dependencies x3', function (t) {
     t.error(err, 'Should not cause error.');
   });
 });
+
+test('Custom providers', function (t) {
+  var configure = qconf.addProviders({
+      custom: function (uri, cb) {
+        return cb(null, {
+          custom: 'foo'
+        });
+      }
+    });
+
+  configure([{
+    name: 'custom',
+    source: 'custom://' 
+  }]).then(function (conf) {
+    t.equal(conf.get('custom'), 'foo',
+      'Should load data from custom provider.');
+    t.end();
+  });
+});

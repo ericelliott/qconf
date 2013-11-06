@@ -4,7 +4,14 @@ var optimist = require('optimist'),
   processDependencies = require('./lib/process-dependencies.js'),
   makeConfig = require('./lib/make-config.js'),
   q = require('q'),
+  mixIn = require('mout/object/mixIn'),
   loadSource = require('./lib/load-source.js'),
+
+  loadFile = require('./lib/load-file.js'),
+  // This could easily be extended
+  // to automatically include all providers
+  // in the providers directory.
+  providers = mixIn({}, loadFile),
 
   argv = optimist.argv,
 
@@ -49,7 +56,7 @@ var optimist = require('optimist'),
     // If the first argument is an Array,
     // assume that it is a list of dependencies.
     if ( Array.isArray(overrides) ) {
-      processDependencies(dependencies)
+      processDependencies(providers, dependencies)
           .then(function (sources) {
 
         config = makeConfig(sources);
@@ -68,7 +75,7 @@ var optimist = require('optimist'),
 
     for (var i = 0; i < URIs.length; i++){
       try {
-        sources.push(loadSource(URIs[i]));
+        sources.push(loadSource.call(providers, URIs[i]));
       } catch (err) {
         errors.push(err);
       }
@@ -83,6 +90,12 @@ var optimist = require('optimist'),
     }
 
     return makeConfig(sources);
+  },
+  addProviders = function addProviders(newProviders) {
+    providers = mixIn(providers, newProviders);
+    return this;
   };
+
+configure.addProviders = addProviders;
 
 module.exports = configure;

@@ -112,10 +112,6 @@ test('emit on undefined', function (t) {
   config.get(attr);
 });
 
-/**
- * Add support for config dependencies. This allows you to specify 
- * configuration that other configuration depends upon.
- */
 test('Dependencies callback', function (t) {
   var subject = {hello: 'world'},
     sentence = function (subject, cb) {
@@ -230,4 +226,50 @@ test('Custom providers', function (t) {
       'Should load data from custom provider.');
     t.end();
   });
+});
+
+test('Refresh timer', function (t) {
+  var counter = 0,
+    first = function () {
+      var data = {
+        a: 1 + counter,
+        b: 2
+      };
+
+      counter++;
+
+      return data;
+    },
+    second = function (first, cb) {
+      return cb(null, {
+        num: first.a + 3,
+        b: 3
+      });
+    };
+ 
+  // Callback = Return undefined.  
+  qconf([{
+      name: 'first',
+      source: first,
+      refreshInterval: 200
+    },
+    {
+      name: 'second',
+      source: second,
+      dependencies: ['first']
+    }
+  ], 
+  function (err, conf) {
+    t.error(err, 'Should not cause error.');
+    t.equal(conf.get('num'), 4,
+      'Should have correct start value');
+    conf.on('refresh', function () {
+      t.equal(conf.get('num'), 5,
+        'Should have correct refreshed value');
+      t.equal(conf.get('b'), 3,
+        'Should preserve precedence');
+      t.end();
+    });
+  });
+ 
 });

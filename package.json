@@ -1,6 +1,6 @@
 {
   "name": "qconf",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Painless configuration for Node with defaults file, environment variables, arguments, function parameters.",
   "main": "qconf.js",
   "dependencies": {

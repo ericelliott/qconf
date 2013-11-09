@@ -52,7 +52,7 @@ Got sick of the complexity of nconf. Don't try to be everything to everybody. Ju
 
 This is the function that gets imported when you require qconf.
 
-Creates a configuration singleton object for your app
+Creates a configuration object for your app
 by reading configuration settings from a defaults file,
 environment variables, command line arguments, and finally
 a function parameters hash, in reverse priority.

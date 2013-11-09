@@ -80,10 +80,6 @@ var qconf = require('qconf'),
     ['./config/defaults.json', './config/overrides.yml']);
 ```
 
-### qconf.clear() ###
-
-Clear the existing configuration. This is typically used to clear out any settings prior to reloading configuration with a subsequent call to `qconf()`.
-
 
 ## The config object ##
 

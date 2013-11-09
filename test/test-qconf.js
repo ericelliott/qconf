@@ -12,6 +12,19 @@ test('basics', function(t) {
   t.end();
 });
 
+test('basics', function(t) {
+  var conf = qconf({
+    deep:{
+      val: true
+    }
+  });
+  t.equal(!!conf.get('deep.val'), true,
+    'Should support deep property lookup.');
+
+  t.end();
+});
+
+
 test('environment variables', function (t) {
   t.equal(!!config.get('env_override'), true,
     'should override defaults.');

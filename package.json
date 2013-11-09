@@ -1,6 +1,6 @@
 {
   "name": "qconf",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Painless configuration for Node with defaults file, environment variables, arguments, function parameters.",
   "main": "qconf.js",
   "dependencies": {
@@ -8,7 +8,8 @@
     "stampit": "~0.5.1",
     "js-yaml": "~2.1.1",
     "q": "~0.9.7",
-    "mout": "~0.7.1"
+    "mout": "~0.7.1",
+    "dotty": "0.0.2"
   },
   "devDependencies": {
     "tape": "~1.0.2",

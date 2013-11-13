@@ -6,6 +6,7 @@ var optimist = require('optimist'),
   q = require('q'),
   mixIn = require('mout/object/mixIn'),
   loadSource = require('./lib/load-source.js'),
+  refreshSource = require('./lib/refresh-source.js'),
 
   loadFile = require('./lib/load-file.js'),
   // This could easily be extended
@@ -57,7 +58,28 @@ var optimist = require('optimist'),
     // assume that it is a list of dependencies.
     if ( Array.isArray(overrides) ) {
       processDependencies(providers, dependencies)
-          .then(function (sources) {
+          .then(function (data) {
+        var list = data.list,
+          loaded = data.loaded,
+          timers,
+
+          sources = list.map(function (source) {
+            return loaded[source.name];
+          }),
+
+          refreshList = dependencies.filter(function (dep) {
+            return dep.refreshInterval;
+          });
+
+        if (refreshList.length) {
+          refreshList.forEach(function setRefresh(source) {
+            return setTimeout(function () {
+              refreshSource(providers, source, list, loaded, config);
+              timers = config.timers = config.timers || [];
+              timers[source.name] = setRefresh(source);
+            }, source.refreshInterval);
+          });
+        }
 
         config = makeConfig(sources);
 

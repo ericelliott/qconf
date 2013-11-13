@@ -2,6 +2,7 @@
 
 var test = require('tape'),
   qconf = require('../qconf.js'),
+  own = require('mout/object/forOwn'),
   config = qconf({param_override: true, param_setting: 'yes'});
 
 test('basics', function(t) {
@@ -133,7 +134,7 @@ test('Dependencies callback', function (t) {
       };
       return cb(null, res);
     };
- 
+
   // Callback = Return undefined.  
   qconf([{
       name: 'subject',
@@ -241,46 +242,34 @@ test('Custom providers', function (t) {
   });
 });
 
-test('Refresh timer', function (t) {
-  var counter = 0,
-    first = function () {
-      var data = {
-        a: 1 + counter,
-        b: 2
+test('refreshInterval', function (t) {
+  var subject = {hello: 'world'},
+    sentence = function (subject, cb) {
+      var res = {
+        sentence: 'goodbye, cruel ' + subject.hello
       };
-
-      counter++;
-
-      return data;
-    },
-    second = function (first, cb) {
-      return cb(null, {
-        num: first.a + 3,
-        b: 3
-      });
+      return cb(null, res);
     };
- 
+
   // Callback = Return undefined.  
   qconf([{
-      name: 'first',
-      source: first,
-      refreshInterval: 200
+      name: 'subject',
+      source: subject,
+      refreshInterval: 500
     },
     {
-      name: 'second',
-      source: second,
-      dependencies: ['first']
+      name: 'sentence',
+      source: sentence,
+      dependencies: ['subject']
     }
   ], 
   function (err, conf) {
     t.error(err, 'Should not cause error.');
-    t.equal(conf.get('num'), 4,
-      'Should have correct start value');
-    conf.on('refresh', function () {
-      t.equal(conf.get('num'), 5,
-        'Should have correct refreshed value');
-      t.equal(conf.get('b'), 3,
-        'Should preserve precedence');
+    t.equal(conf.get('sentence'), 'goodbye, cruel world',
+      'Should load dependencies and call callback.');
+    conf.on('refresh', function (changes) {
+      t.pass('should emit refresh event.');
+      t.ok(changes, 'Should pass changes');
       t.end();
     });
   });

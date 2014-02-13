@@ -58,7 +58,7 @@ environment variables, command line arguments, and finally
 a function parameters hash, in reverse priority.
 
 * @param  {Object} [overrides] A map of config keys and values.
-* @param  {Array} || {String} [filesPath] An array of config files in order of precedence (least to most) or path to the defaults file. Can be the only parameter.
+* @param  {Array} || {String} [filesURI] An array of config files in order of precedence (least to most) or path to the defaults file. Can be the only parameter.
 * @return {Object} config A configuration object.
 * @return {Function} config.get The get method.
 * @return {Function} config.set The set method.
@@ -69,7 +69,7 @@ More examples using overrides. File overrides support JSON and YAML files:
 var qconf = require('qconf'),
   // You can pass in an array of configuration files.
   // Last in wins:
-  config = qconf(['./config/defaults.json', './config/overrides.yml']);
+  config = qconf(['file://config/defaults.json', 'file://config/overrides.yml']);
 ```
 
 ```js
@@ -77,7 +77,7 @@ var qconf = require('qconf'),
   // You can pass in argument overrides and file overrides.
   // Argument overrides win.
   config = qconf({override: 'This setting trumps all.'},
-    ['./config/defaults.json', './config/overrides.yml']);
+    ['file://config/defaults.json', 'file://config/overrides.yml']);
 ```
 
 

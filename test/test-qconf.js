@@ -86,6 +86,18 @@ test('multifile path override', function (t) {
   t.end();
 });
 
+test('multifile path override, as first argument', function (t) {
+  config = qconf(
+    ['file://test/path-override.json', 'file://config/config.json']);
+
+  t.ok(config.get('default_setting'),
+    'should read configuration from custom paths from in passed array.');
+  t.equal(config.get('path_override'), false,
+    'path_override should be false.');
+  t.end();
+});
+
+
 test('yaml', function (t) {
   config = qconf({param_override: true, param_setting: 'yes'},
     'file://test/yaml-file.yml');

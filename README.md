@@ -9,7 +9,7 @@ defaults file < process.env < command line arguments < function call override
 
 Create your config object:
 ```
-var qconf = require('../qconf.js'),
+var qconf = require('qconf.js'),
   config = qconf(); // 99% of the time, this is all you need!
 ```
 

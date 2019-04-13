@@ -6,7 +6,7 @@
   "dependencies": {
     "optimist": "~0.5.0",
     "stampit": "~0.5.1",
-    "js-yaml": "~2.1.1",
+    "js-yaml": "~3.13.1",
     "q": "~0.9.7",
     "mout": "~0.7.1",
     "dotty": "0.0.2"

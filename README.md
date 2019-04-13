@@ -5,6 +5,11 @@ Painless configuration for Node apps with defaults file, environment variables, 
 
 defaults file < process.env < command line arguments < function call override
 
+
+## Status: No Longer Maintained
+
+This repo is no longer actively maintained.
+
 ## Getting started
 
 Create your config object:
